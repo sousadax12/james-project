@@ -1,3 +1,5 @@
+###########
+Add bcrypt support to JPA UserRepository
 Apache James Project
 ====================
 
