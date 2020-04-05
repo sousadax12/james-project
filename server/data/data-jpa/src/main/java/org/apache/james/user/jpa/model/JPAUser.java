@@ -34,6 +34,7 @@ import javax.persistence.Version;
 
 import org.apache.james.core.Username;
 import org.apache.james.user.api.model.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.hash.HashFunction;
@@ -68,6 +69,10 @@ public class JPAUser implements User {
         switch (algorithm) {
             case "NONE":
                 return (password) -> "password";
+            case "BCRYPT":
+                return (password) -> {
+                    return BCrypt.hashpw(password, BCrypt.gensalt());
+                };
             default:
                 return (password) -> chooseHashing(algorithm).hashString(password, StandardCharsets.UTF_8).toString();
         }
@@ -75,6 +80,7 @@ public class JPAUser implements User {
 
     @SuppressWarnings("deprecation")
     private static HashFunction chooseHashing(String algorithm) {
+
         switch (algorithm) {
             case "MD5":
                 return Hashing.md5();
